@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
-import { Play, Heart, Download, X } from 'lucide-react';
-
-interface Video {
-  id: string;
-  thumbnail: string;
-  videoUrl: string;
-  title: string;
-  creator: string;
-  duration: string;
-  tags: string[];
-}
+import { Play, Heart, Download, X, Video as VideoIcon, Filter } from 'lucide-react';
+import { videoCategories, Video } from '../data/videos';
 
 interface VideoGalleryProps {
   searchTerm: string;
@@ -18,67 +9,14 @@ interface VideoGalleryProps {
 const VideoGallery: React.FC<VideoGalleryProps> = ({ searchTerm }) => {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const videos: Video[] = [
-    {
-      id: '1',
-      thumbnail: 'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=600',
-      videoUrl: 'https://player.vimeo.com/video/76979871',
-      title: 'Mountain Adventure',
-      creator: 'Nature Films',
-      duration: '2:34',
-      tags: ['mountain', 'adventure', 'nature']
-    },
-    {
-      id: '2',
-      thumbnail: 'https://images.pexels.com/photos/1323550/pexels-photo-1323550.jpeg?auto=compress&cs=tinysrgb&w=600',
-      videoUrl: 'https://player.vimeo.com/video/90509568',
-      title: 'Ocean Waves',
-      creator: 'Blue Ocean Media',
-      duration: '1:45',
-      tags: ['ocean', 'waves', 'relaxing']
-    },
-    {
-      id: '3',
-      thumbnail: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=600',
-      videoUrl: 'https://player.vimeo.com/video/169599296',
-      title: 'Forest Exploration',
-      creator: 'Wild Life Productions',
-      duration: '3:12',
-      tags: ['forest', 'exploration', 'wildlife']
-    },
-    {
-      id: '4',
-      thumbnail: 'https://images.pexels.com/photos/1266810/pexels-photo-1266810.jpeg?auto=compress&cs=tinysrgb&w=600',
-      videoUrl: 'https://player.vimeo.com/video/162391636',
-      title: 'City Life',
-      creator: 'Urban Stories',
-      duration: '2:58',
-      tags: ['city', 'urban', 'lifestyle']
-    },
-    {
-      id: '5',
-      thumbnail: 'https://images.pexels.com/photos/1591447/pexels-photo-1591447.jpeg?auto=compress&cs=tinysrgb&w=600',
-      videoUrl: 'https://player.vimeo.com/video/148751763',
-      title: 'Desert Sunset',
-      creator: 'Desert Films',
-      duration: '1:28',
-      tags: ['desert', 'sunset', 'timelapse']
-    },
-    {
-      id: '6',
-      thumbnail: 'https://images.pexels.com/photos/1574653/pexels-photo-1574653.jpeg?auto=compress&cs=tinysrgb&w=600',
-      videoUrl: 'https://player.vimeo.com/video/195913085',
-      title: 'Seasonal Changes',
-      creator: 'Time Lapse Studio',
-      duration: '4:15',
-      tags: ['seasons', 'timelapse', 'nature']
-    }
-  ];
-
-  const filteredVideos = videos.filter(video =>
+  const currentVideos = videoCategories.find(cat => cat.id === selectedCategory)?.videos || [];
+  
+  const filteredVideos = currentVideos.filter(video =>
     video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    video.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    video.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    video.creator.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleFavorite = (videoId: string) => {
@@ -91,13 +29,51 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ searchTerm }) => {
     setFavorites(newFavorites);
   };
 
+  // Placeholder thumbnail generator
+  const getPlaceholderThumbnail = (video: Video) => {
+    const colors = ['4F46E5', '059669', 'DC2626', 'D97706', '7C3AED', 'DB2777'];
+    const color = colors[parseInt(video.id.slice(-1), 36) % colors.length];
+    
+    return `https://via.placeholder.com/600x400/${color}/FFFFFF?text=${encodeURIComponent(video.title)}`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Video Collection</h2>
-        <p className="text-gray-600">Experience captivating videos and documentaries</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Video Collections</h2>
+            <p className="text-gray-600">Experience captivating videos organized by category</p>
+          </div>
+          
+          <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <VideoIcon className="h-4 w-4" />
+              <span>{filteredVideos.length} videos</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Filter className="h-5 w-5 text-gray-400 mt-2" />
+          {videoCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                selectedCategory === category.id
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {category.name} ({category.videos.length})
+            </button>
+          ))}
+        </div>
       </div>
 
+      {/* Video Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredVideos.map((video) => (
           <div
@@ -106,7 +82,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ searchTerm }) => {
           >
             <div className="aspect-video overflow-hidden relative">
               <img
-                src={video.thumbnail}
+                src={getPlaceholderThumbnail(video)}
                 alt={video.title}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
@@ -124,11 +100,18 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ searchTerm }) => {
               <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded text-sm">
                 {video.duration}
               </div>
+
+              <div className="absolute top-3 left-3">
+                <span className="px-2 py-1 bg-black/50 text-white text-xs rounded-full backdrop-blur-sm">
+                  {video.category}
+                </span>
+              </div>
             </div>
             
             <div className="p-4">
-              <h3 className="font-semibold text-lg mb-1 text-gray-900">{video.title}</h3>
-              <p className="text-sm text-gray-600 mb-3">by {video.creator}</p>
+              <h3 className="font-semibold text-lg mb-1 text-gray-900 line-clamp-2">{video.title}</h3>
+              <p className="text-sm text-gray-600 mb-2">by {video.creator}</p>
+              <p className="text-sm text-gray-500 mb-3 line-clamp-2">{video.description}</p>
               
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-1">
@@ -168,7 +151,11 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ searchTerm }) => {
 
       {filteredVideos.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No videos found matching your search.</p>
+          <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+            <VideoIcon className="h-12 w-12 text-gray-400" />
+          </div>
+          <p className="text-gray-500 text-lg mb-2">No videos found</p>
+          <p className="text-gray-400">Try adjusting your search or category filter</p>
         </div>
       )}
 
@@ -183,17 +170,30 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ searchTerm }) => {
               <X className="h-8 w-8" />
             </button>
             <div className="aspect-video bg-black rounded-lg overflow-hidden">
-              <iframe
-                src={selectedVideo.videoUrl}
-                className="w-full h-full"
-                allow="autoplay; fullscreen"
-                allowFullScreen
-                title={selectedVideo.title}
-              />
+              {/* Placeholder for video player */}
+              <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                <div className="text-center text-white">
+                  <Play className="h-16 w-16 mx-auto mb-4 text-emerald-500" />
+                  <h3 className="text-xl font-semibold mb-2">{selectedVideo.title}</h3>
+                  <p className="text-gray-300 mb-4">{selectedVideo.description}</p>
+                  <p className="text-sm text-gray-400">Video file: {selectedVideo.filename}</p>
+                </div>
+              </div>
             </div>
             <div className="mt-4 text-white">
               <h3 className="text-2xl font-bold mb-2">{selectedVideo.title}</h3>
-              <p className="text-gray-300">Created by {selectedVideo.creator}</p>
+              <p className="text-gray-300 mb-2">Created by {selectedVideo.creator}</p>
+              <p className="text-gray-400 mb-4">{selectedVideo.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {selectedVideo.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-emerald-600 text-white text-sm rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
