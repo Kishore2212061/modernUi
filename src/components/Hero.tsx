@@ -11,40 +11,40 @@ const Hero: React.FC = () => {
         }} />
       </div>
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full">
-              <Camera className="h-6 w-6" />
+            <div className="flex items-center space-x-2 sm:space-x-4 bg-white/10 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-full">
+              <Camera className="h-5 w-5 sm:h-6 sm:w-6" />
               <Sparkles className="h-5 w-5" />
-              <Video className="h-6 w-6" />
+              <Video className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
           </div>
           
-          <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight px-4">
             Discover Amazing
-            <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent block">
+            <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent block mt-2">
               Visual Stories
             </span>
           </h1>
           
-          <p className="text-xl sm:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
             Explore our curated collection of stunning photography and captivating videos. 
             Every piece tells a story, every moment captures beauty.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-6 px-4">
+            <button className="w-full sm:w-auto bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
               Explore Photos
             </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-blue-600 transition-all duration-200 transform hover:scale-105">
+            <button className="w-full sm:w-auto border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-white hover:text-blue-600 transition-all duration-200 transform hover:scale-105">
               Watch Videos
             </button>
           </div>
         </div>
       </div>
       
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-12 sm:h-24 bg-gradient-to-t from-white to-transparent" />
     </div>
   );
 };
